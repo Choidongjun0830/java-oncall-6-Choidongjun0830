@@ -1,22 +1,61 @@
 package oncall;
 
+import camp.nextstep.edu.missionutils.test.NsTest;
+import org.junit.jupiter.api.Test;
+
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import camp.nextstep.edu.missionutils.test.NsTest;
-import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.annotation.Testable;
-
-class ApplicationTest extends NsTest {
+class ApplicationExceptionTest extends NsTest {
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     @Test
-    void 예외_테스트() {
+    void 예외_테스트_중복() {
+        assertSimpleTest(() -> {
+            run("5,토",
+                    "허브,쥬니,허브, 라온,헤나,우코,에단,수달,파워,히이로,마코,슬링키,모디,연어,깃짱,리오,고니,박스터,달리,조이,노아이즈,도이,도치,홍고,스캇,폴로,해시,로지,첵스,아이크,우가,푸만능,애쉬,로이스,오션",
+                    "오션,로이스,푸만능,애쉬,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브",
+                    "오션,로이스,애쉬,푸만능,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브"
+            );
+            assertThat(output()).contains(
+                    "[ERROR]",
+                    "4월 1일 토 오션" + LINE_SEPARATOR,
+                    "4월 2일 일 로이스" + LINE_SEPARATOR,
+                    "4월 3일 월 허브" + LINE_SEPARATOR,
+                    "4월 4일 화 쥬니" + LINE_SEPARATOR,
+                    "4월 5일 수 말랑" + LINE_SEPARATOR
+            );
+        });
+    }
+
+    @Test
+    void 예외_테스트_5명_미만() {
         assertSimpleTest(() -> {
             run("0,일",
                     "4,토",
-                    "허브,쥬니,말랑,라온,헤나,우코,에단,수달,파워,히이로,마코,슬링키,모디,연어,깃짱,리오,고니,박스터,달리,조이,노아이즈,도이,도치,홍고,스캇,폴로,해시,로지,첵스,아이크,우가,푸만능,애쉬,로이스,오션",
+                    "오션,로이스,애쉬,푸만능,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브,아,이,스,크,림",
+                    "오션,로이스,애쉬,푸만능,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브",
+                    "오션,로이스,애쉬,푸만능,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브"
+            );
+            assertThat(output()).contains(
+                    "[ERROR]",
+                    "4월 1일 토 오션" + LINE_SEPARATOR,
+                    "4월 2일 일 로이스" + LINE_SEPARATOR,
+                    "4월 3일 월 허브" + LINE_SEPARATOR,
+                    "4월 4일 화 쥬니" + LINE_SEPARATOR,
+                    "4월 5일 수 말랑" + LINE_SEPARATOR
+            );
+        });
+    }
+
+    @Test
+    void 예외_테스트_35명_초과() {
+        assertSimpleTest(() -> {
+            run("0,일",
+                    "4,토",
+                    "허브,쥬니,허브",
+                    "오션,로이스,애쉬,푸만능,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브",
                     "오션,로이스,애쉬,푸만능,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브"
             );
             assertThat(output()).contains(

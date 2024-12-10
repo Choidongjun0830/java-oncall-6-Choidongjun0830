@@ -1,6 +1,7 @@
 package oncall.view;
 
 import camp.nextstep.edu.missionutils.Console;
+import oncall.validator.InputValidator;
 
 public class InputView {
 
