@@ -4,6 +4,8 @@ import oncall.domain.Employee;
 import oncall.dto.EmergencyDateDto;
 import oncall.view.InputView;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
@@ -26,16 +28,28 @@ public class OnCallService {
         List<String> weekDay = Arrays.asList(weekDayInput.split(","));
         List<Employee> employeeWeekday = convertEmployeeList(weekDay);
         for (Employee employee : employeeWeekday) {
-            weekdays.addFirst(employee);
+            weekdays.addLast(employee);
         }
 
         String weekendInput = inputView.getWeekend();
         List<String> weekend = Arrays.asList(weekendInput.split(","));
         List<Employee> employeeWeekend = convertEmployeeList(weekend);
         for (Employee employee : employeeWeekend) {
-            weekdays.addFirst(employee);
+            weekends.addLast(employee);
         }
     }
+
+    public void initHolidays(List<LocalDate> holidays) {
+        holidays.add(LocalDate.of(2024, 1, 1));
+        holidays.add(LocalDate.of(2024, 3, 1));
+        holidays.add(LocalDate.of(2024, 5, 5));
+        holidays.add(LocalDate.of(2024, 6, 6));
+        holidays.add(LocalDate.of(2024, 8, 15));
+        holidays.add(LocalDate.of(2024, 10, 3));
+        holidays.add(LocalDate.of(2024, 10, 9));
+        holidays.add(LocalDate.of(2024, 12, 25));
+    }
+
 
     private List<Employee> convertEmployeeList(List<String> list) {
         return list.stream()
