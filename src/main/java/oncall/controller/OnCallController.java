@@ -28,28 +28,55 @@ public class OnCallController {
 
         Deque<Employee> weekdays = new ArrayDeque<>();
         Deque<Employee> weekends = new ArrayDeque<>();
-        List<LocalDate> holidays = new ArrayList<>();
-        List<ResultDto> results = new ArrayList<>();
+        List<String> holidays = new ArrayList<>();
         onCallService.getEmergencyLists(weekdays, weekends);
         onCallService.initHolidays(holidays);
 
-        int lengthOfMonth = LocalDate.of(2024, monthAndDay.getMonth(), 1).lengthOfMonth();
+        List<ResultDto> results = new ArrayList<>();
+        int lengthOfMonth = LocalDate.of(2023, monthAndDay.getMonth(), 1).lengthOfMonth();
         Week weekday = Week.findDay(day);
 
-        for(int date = 1; date <= lengthOfMonth; date++) {
-            LocalDate today = LocalDate.of(2024, month, date);
-            if(holidays.contains(today) || weekday.isHoliday()) { //휴일일 경우
-                Employee employee = weekends.poll();
-                results.add(new ResultDto(month, date, weekday.getDay(), employee.getName()));
-                weekday = weekday.next();
-            } else {
-                Employee employee = weekdays.poll();
-                results.add(new ResultDto(month, date, weekday.getDay(), employee.getName()));
-                weekday = weekday.next();
-            }
-
-        }
-
+        processAssign(lengthOfMonth, month, holidays, weekday, weekends, results, weekdays);
         outputView.printResults(results);
+    }
+
+    private static void processAssign(int lengthOfMonth, int month, List<String> holidays, Week weekday, Deque<Employee> weekends, List<ResultDto> results, Deque<Employee> weekdays) {
+        for(int date = 1; date <= lengthOfMonth; date++) {
+            String today = month + "/" + date;
+            Employee employee = getEmployee(holidays, weekday, weekends, weekdays, today, results);
+            String isHoliday = "";
+            if(holidays.contains(today)) {
+                isHoliday = "(휴일)";
+            }
+            results.add(new ResultDto(month, date, weekday.getDay(), employee, isHoliday));
+            weekday = weekday.next();
+        }
+    }
+
+    private static Employee getEmployee(List<String> holidays, Week weekday, Deque<Employee> weekends, Deque<Employee> weekdays, String today, List<ResultDto> results) {
+        Employee employee;
+        if(holidays.contains(today) || weekday.isHoliday()) { //휴일일 경우
+            employee = weekends.peek();
+            if(!results.isEmpty()) {
+                Employee lastEmployee = results.get(results.size() - 1).getEmployee();
+                if(lastEmployee.getName().equals(employee.getName())) {
+                    Employee temp = weekends.poll();
+                    weekends.addFirst(employee);
+                    weekends.addFirst(temp);
+                }
+            }
+            return weekends.poll();
+        }
+        employee = weekdays.peek();
+        if(!results.isEmpty()) {
+            Employee lastEmployee = results.get(results.size() - 1).getEmployee();
+            if(lastEmployee.getName().equals(employee.getName())) {
+                Employee firstEmployee = weekdays.poll();
+                Employee secondEmployee = weekdays.poll();
+                weekdays.addFirst(firstEmployee);
+                weekdays.addFirst(secondEmployee);
+            }
+        }
+        return weekdays.poll();
     }
 }
